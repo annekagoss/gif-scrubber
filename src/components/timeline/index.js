@@ -32,6 +32,16 @@ export default class Timeline extends Component {
       return;
     }
 
+    const $triggers = [];
+
+    triggers.forEach((trigger) => {
+      $triggers.push(this.getNewTrigger(trigger));
+    });
+
+    return $triggers;
+  }
+
+  getNewTrigger(trigger) {
     const baseStyles = {
       position: "absolute",
       height: HEIGHT,
@@ -39,10 +49,6 @@ export default class Timeline extends Component {
       transform: "translateX(-50%)",
       pointerEvents: "none"
     }
-
-    // Only look at one trigger for now
-    // TODO: Add ability to render multiple
-    const trigger = triggers[0];
 
     const offset = getTriggerOffset(trigger);
     const width = getTriggerZoneWidth(trigger);

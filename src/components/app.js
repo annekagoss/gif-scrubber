@@ -7,7 +7,24 @@ const EYEROLL_TRIGGERS = [
 	{
 		timestamp: 0.3,
 		duration: 0.15,
-		name: "peak-eyeroll"
+		name: "peak-eyeroll",
+		text: "PEAK EYE ROLL",
+		circle: {
+		  top: .2,
+		  left: .59,
+			size: .2
+		}
+	},
+	{
+		timestamp: 0.85,
+		duration: 0.15,
+		name: "amirite",
+		text: "AMIRITE",
+		circle: {
+		  top: .1,
+		  left: .27,
+			size: .5
+		}
 	}
 ];
 

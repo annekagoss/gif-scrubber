@@ -187,14 +187,16 @@ export default class ScrollSprite extends Component {
 
     this.playHead = this.getNewPlayhead(currentFrame, total);
 
+    let activeTrigger;
+
     triggers.forEach((trigger) => {
       const temporalPadding = getTemporalPadding(trigger);
       if (Math.abs(this.playHead - trigger.timestamp) < temporalPadding) {
-        this.activeTrigger = trigger;
-      } else {
-        this.activeTrigger = null;
+        activeTrigger = trigger;
       }
     });
+
+    this.activeTrigger = activeTrigger ? activeTrigger : null;
   }
 
   getNewPlayhead(currentFrame, total) {

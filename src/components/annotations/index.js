@@ -27,16 +27,6 @@ const baseTriggerStyles = {
   opacity: "0"
 }
 
-const eyerollStyles = {
-  base: {
-    opacity: "1"
-  },
-  circle: {
-    top: .2,
-    left: .59
-  }
-}
-
 export default class Annotations extends Component {
 
   getCurrentStyles() {
@@ -52,9 +42,14 @@ export default class Annotations extends Component {
       };
     }
 
-    if (activeTrigger.name === "peak-eyeroll") {
-      return eyerollStyles;
+    const base = {
+      opacity: "1"
     }
+
+    return {
+      base,
+      circle: activeTrigger.circle
+    };
   }
 
   getTriggerStyles() {
@@ -79,11 +74,11 @@ export default class Annotations extends Component {
 
   getTriggerCircleStyles() {
     const { width, height} = this.getCanvasSize();
-    const { left, top } = this.getCurrentStyles().circle;
+    const { left, top, size } = this.getCurrentStyles().circle;
 
     const scaledLeft = `${left * width}px`;
     const scaledTop = `${top * height}px`;;
-    const scaledSize = `${width * .2}px`
+    const scaledSize = `${width * size}px`
 
     const currentCircleStyles = {
       left: scaledLeft,
@@ -96,11 +91,17 @@ export default class Annotations extends Component {
   }
 
   render() {
+    const { activeTrigger } = this.props;
+
+    if (!activeTrigger) {
+      return;
+    }
+
     return (
       <div>
         <div className="trigger" data-name="peak-eyeroll" style={this.getTriggerStyles()}>
           <div className="trigger__circle" style={this.getTriggerCircleStyles()}></div>
-          <div className="trigger__label" style={triggerLabelStyles}>PEAK EYE ROLL</div>
+          <div className="trigger__label" style={triggerLabelStyles}>{activeTrigger.text}</div>
         </div>
       </div>
     );
