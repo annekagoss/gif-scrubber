@@ -6,6 +6,7 @@ const EYEROLL_SOURCE = "../assets/images/rock-spritesheet.png";
 const EYEROLL_TRIGGERS = [
 	{
 		timestamp: 0.3,
+		duration: 0.15,
 		name: "peak-eyeroll"
 	}
 ];

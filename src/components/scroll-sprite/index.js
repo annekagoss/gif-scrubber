@@ -2,6 +2,8 @@ import { h, Component } from "preact"
 import Timeline from "../timeline"
 import Annotations from "../annotations"
 
+import { getTemporalPadding } from "../../utils"
+
 const SCROLL_SPEED = 1;
 
 class Sprite {
@@ -129,7 +131,8 @@ export default class ScrollSprite extends Component {
     this.playHead = this.getNewPlayhead(currentFrame, total);
 
     triggers.forEach((trigger) => {
-      if (Math.abs(this.playHead - trigger.timestamp) < .075) {
+      const temporalPadding = getTemporalPadding(trigger);
+      if (Math.abs(this.playHead - trigger.timestamp) < temporalPadding) {
         this.trigger = trigger;
       } else {
         this.trigger = null;
@@ -150,7 +153,7 @@ export default class ScrollSprite extends Component {
   }
 
   render() {
-    const { width, height } = this.props.options;
+    const { width, height, triggers } = this.props.options;
     const { sprite, scrollPosition, resizeTimestamp } = this.state;
 
     if (sprite) {
@@ -160,8 +163,8 @@ export default class ScrollSprite extends Component {
     return (
       <div style={scrollSpriteStyles}>
         <canvas width={width} height={height} style={{ width: "100%" }} ref={el => this.$canvas = el}></canvas>
-        <Timeline playHead={this.playHead} />
-        <Annotations trigger={this.trigger} canvas={this.$canvas} timestamp={resizeTimestamp}/>
+        <Timeline playHead={this.playHead} triggers={triggers} />
+        <Annotations trigger={this.trigger} canvas={this.$canvas} timestamp={resizeTimestamp} />
       </div>
     );
   }
