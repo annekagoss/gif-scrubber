@@ -69,8 +69,10 @@ export default class ScrollSprite extends Component {
     startTime: Date.now(),
     time: null,
     scrollPosition: 0,
-    lastScrollPosition: -1,
-    resizeTimestamp: Date.now()
+    resizeTimestamp: Date.now(),
+    scrubbing: false,
+    scrubPosition: null,
+    scaledScrubPosition: null
   }
 
   componentDidMount() {
@@ -116,9 +118,44 @@ export default class ScrollSprite extends Component {
     const newScrollPosition = scrollPosition + Math.floor(event.deltaY * SCROLL_SPEED);
 
     this.setState({
-      scrollPosition: newScrollPosition,
-      lastScrollPosition: scrollPosition
+      scrollPosition: newScrollPosition
     });
+  }
+
+  initScrub = () => {
+    this.setState({ scrubbing: true });
+  }
+
+  moveScrub = (event) => {
+    const { scrubbing, sprite } = this.state;
+
+    if (!scrubbing) {
+      return;
+    }
+
+    const totalWidth = event.target.getBoundingClientRect().width;
+    const scrubPosition = (event.pageX - event.target.offsetLeft) / totalWidth;
+
+    const scaledScrubPosition = this.getScaledScrubPosition(scrubPosition);
+
+    this.setState({
+       scrubPosition,
+       scaledScrubPosition
+    });
+  }
+
+  getScaledScrubPosition(scrubPosition) {
+    const { sprite } = this.state;
+
+    if (scrubPosition > .99) {
+      return sprite.tiles.total;
+    }
+
+    return Math.floor(scrubPosition * sprite.tiles.total);
+  }
+
+  endScrub = () => {
+    this.setState({ scrubbing: false });
   }
 
   updateResizeTimestamp = () => {
@@ -152,18 +189,33 @@ export default class ScrollSprite extends Component {
     return currentFrame / total;
   }
 
+  getSpriteFrame() {
+      const { scrubbing, scrollPosition, scaledScrubPosition } = this.state;
+      return scrubbing ? scaledScrubPosition : scrollPosition;
+  }
+
   render() {
     const { width, height, triggers } = this.props.options;
     const { sprite, scrollPosition, resizeTimestamp } = this.state;
 
     if (sprite) {
-      sprite.update(scrollPosition);
+      const frame = this.getSpriteFrame();
+      sprite.update(frame);
+    }
+
+    const timelineData = {
+      playHead: this.playHead,
+      triggers,
+      activeTrigger: this.activeTrigger,
+      initScrub: this.initScrub,
+      moveScrub: this.moveScrub,
+      endScrub: this.endScrub
     }
 
     return (
       <div style={scrollSpriteStyles}>
         <canvas width={width} height={height} style={{ width: "100%" }} ref={el => this.$canvas = el}></canvas>
-        <Timeline playHead={this.playHead} triggers={triggers} activeTrigger={this.activeTrigger} />
+        <Timeline data={timelineData} />
         <Annotations activeTrigger={this.activeTrigger} canvas={this.$canvas} timestamp={resizeTimestamp} />
       </div>
     );

@@ -24,7 +24,7 @@ function getPlayheadWidth(activeTrigger) {
 export default class Timeline extends Component {
 
   renderTriggerZones() {
-    const { triggers } = this.props;
+    const { triggers } = this.props.data;
 
     if (!triggers) {
       return;
@@ -34,7 +34,8 @@ export default class Timeline extends Component {
       position: "absolute",
       height: "40px",
       backgroundColor: "rgba(0, 0, 0, .25)",
-      transform: "translateX(-50%)"
+      transform: "translateX(-50%)",
+      pointerEvents: "none"
     }
 
     // Only look at one trigger for now
@@ -57,11 +58,12 @@ export default class Timeline extends Component {
   }
 
   getPlayheadStyles() {
-    const { playHead, trigger, activeTrigger } = this.props;
+    const { playHead, activeTrigger } = this.props.data;
 
     const baseStyles = {
       position: "absolute",
-      height: "40px"
+      height: "40px",
+      pointerEvents: "none"
     }
 
     const offset = 100 * playHead;
@@ -78,8 +80,10 @@ export default class Timeline extends Component {
   }
 
   render() {
+    const { initScrub, moveScrub, endScrub } = this.props.data;
+
     return (
-      <div className="timeline" style={timelineStyles}>
+      <div className="timeline" style={timelineStyles} onmousedown={initScrub} onmousemove={moveScrub} onmouseup={endScrub}>
         { this.renderTriggerZones() }
         <div className="timeline__playhead" style={this.getPlayheadStyles()}></div>
       </div>
