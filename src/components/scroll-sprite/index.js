@@ -124,29 +124,44 @@ export default class ScrollSprite extends Component {
     });
   }
 
-  initScrub = () => {
+  initScrub = (event) => {
+    const { scrubPosition, scaledScrubPosition } = this.getNewScrubPosition(event);
+
     this.setState({
       scrubbing: true,
-      scrolling: false
+      scrolling: false,
+      scrubPosition,
+      scaledScrubPosition
     });
   }
 
   moveScrub = (event) => {
-    const { scrubbing, sprite } = this.state;
+    const { scrubbing } = this.state;
 
     if (!scrubbing) {
       return;
     }
+
+    const { scrubPosition, scaledScrubPosition } = this.getNewScrubPosition(event);
+
+    this.setState({
+       scrubPosition,
+       scaledScrubPosition
+    });
+  }
+
+  getNewScrubPosition(event) {
+    const { scrubbing, sprite } = this.state;
 
     const totalWidth = event.target.getBoundingClientRect().width;
     const scrubPosition = (event.pageX - event.target.offsetLeft) / totalWidth;
 
     const scaledScrubPosition = this.getScaledScrubPosition(scrubPosition);
 
-    this.setState({
+    return {
        scrubPosition,
        scaledScrubPosition
-    });
+    };
   }
 
   getScaledScrubPosition(scrubPosition) {
