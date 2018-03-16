@@ -1,6 +1,6 @@
 import { h, Component } from "preact"
-
-const INTERVAL = 1;
+import Timeline from "../timeline"
+import Annotations from "../annotations"
 
 const SCROLL_SPEED = 1;
 
@@ -55,151 +55,6 @@ class Sprite {
     }
 };
 
-
-
-const triggerCircleStyles = {
-  width: "80px",
-  height: "80px",
-  borderRadius: "1000px",
-  border: "solid 5px red",
-  position: "absolute",
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  transition: "left 0s ease 00s, top 0s ease 0s"
-}
-
-const triggerLabelStyles = {
-  color: "red",
-  fontFamily: "sans-serif",
-  fontWeight: "bold",
-  fontSize: "50px",
-  width: "100%",
-  textAlign: "center"
-}
-
-const baseTriggerStyles = {
-  display: "block",
-  opacity: "0"
-}
-
-const eyerollStyles = {
-  base: {
-    opacity: "1"
-  },
-  circle: {
-    top: .2,
-    left: .59
-  }
-}
-
-
-class Annotations extends Component {
-
-  getCurrentStyles() {
-    const { trigger } = this.props;
-
-    if (!trigger) {
-      return {
-        base: {},
-        circle: {
-          left: 0,
-          top: 0
-        }
-      };
-    }
-
-    if (trigger.name === "peak-eyeroll") {
-      return eyerollStyles;
-    }
-  }
-
-  getTriggerStyles() {
-    const currentBaseStyles = this.getCurrentStyles().base;
-    return { ...baseTriggerStyles, ...currentBaseStyles };
-  }
-
-  getCanvasSize() {
-    const { canvas } = this.props;
-
-    if (!canvas) {
-      return {
-        width: 0,
-        height: 0
-      };
-    }
-
-    const { width, height } = canvas.getBoundingClientRect();
-
-    return { width, height };
-  }
-
-  getTriggerCircleStyles() {
-    const { width, height} = this.getCanvasSize();
-    const { left, top } = this.getCurrentStyles().circle;
-
-    const scaledLeft = `${left * width}px`;
-    const scaledTop = `${top * height}px`;;
-    const scaledSize = `${width * .2}px`
-
-    const currentCircleStyles = {
-      left: scaledLeft,
-      top: scaledTop,
-      width: scaledSize,
-      height: scaledSize
-    }
-
-    return { ...triggerCircleStyles, ...currentCircleStyles }
-  }
-
-  render() {
-    return (
-      <div>
-        <div className="trigger" data-name="peak-eyeroll" style={this.getTriggerStyles()}>
-          <div className="trigger__circle" style={this.getTriggerCircleStyles()}></div>
-          <div className="trigger__label" style={triggerLabelStyles}>PEAK EYEROLL</div>
-        </div>
-      </div>
-    );
-  }
-}
-
-
-const timelineStyles = {
-  width: "100%",
-  height: "40px",
-  position: "relative",
-  background: "rgba(0, 0, 0, .1)"
-}
-
-class Timeline extends Component {
-  getPlayheadStyles() {
-    const { playHead } = this.props;
-
-    const baseStyles = {
-      position: "absolute",
-      width: "1px",
-      height: "40px",
-      backgroundColor: "black"
-    }
-
-    const position = 100 * playHead;
-
-    const styles = { ...baseStyles, left: `${position}%` };
-
-    return styles;
-  }
-
-  render() {
-    return (
-      <div className="timeline" style={timelineStyles}>
-        <div className="timeline__playhead" style={this.getPlayheadStyles()}></div>
-      </div>
-    );
-  }
-}
-
 const scrollSpriteStyles = {
   width: "100%",
   height: "100%"
@@ -212,13 +67,15 @@ export default class ScrollSprite extends Component {
     startTime: Date.now(),
     time: null,
     scrollPosition: 0,
-    lastScrollPosition: -1
+    lastScrollPosition: -1,
+    resizeTimestamp: Date.now()
   }
 
   componentDidMount() {
       const { sprite } = this.state;
 
       document.addEventListener("mousewheel", this.updateScrollPosition, { passive: false });
+      window.addEventListener("resize", this.handleResize);
 
       if (!sprite && this.$canvas) {
         this.initializeSprite();
@@ -227,6 +84,7 @@ export default class ScrollSprite extends Component {
 
   componentWillUnmount() {
       document.removeEventListener("mousewheel", this.updateScrollPosition, { passive: false });
+      window.removeEventListener("resize", this.handleResize);
   }
 
   initializeSprite = () => {
@@ -259,6 +117,11 @@ export default class ScrollSprite extends Component {
       scrollPosition: newScrollPosition,
       lastScrollPosition: scrollPosition
     });
+  }
+
+  handleResize = () => {
+    console.log("resize");
+    this.setState({ resizeTimestamp: Date.now() });
   }
 
   updatePlayHead = (currentFrame, total) => {
