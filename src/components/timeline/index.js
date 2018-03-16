@@ -1,16 +1,15 @@
 import { h, Component } from "preact"
 
 import {
+  TIMELINE_HEIGHT,
   getTemporalPadding,
   getTriggerOffset,
   getTriggerZoneWidth
 } from "../../utils"
 
-const HEIGHT = "60px"
-
 const timelineStyles = {
   width: "100%",
-  height: HEIGHT,
+  height: `${TIMELINE_HEIGHT}px`,
   position: "relative",
   background: "rgba(0, 0, 0, .1)"
 }
@@ -44,7 +43,7 @@ export default class Timeline extends Component {
   getNewTrigger(trigger) {
     const baseStyles = {
       position: "absolute",
-      height: HEIGHT,
+      height: `${TIMELINE_HEIGHT}px`,
       backgroundColor: "rgba(0, 0, 0, .25)",
       transform: "translateX(-50%)",
       pointerEvents: "none"
@@ -70,7 +69,7 @@ export default class Timeline extends Component {
 
     const baseStyles = {
       position: "absolute",
-      height: HEIGHT,
+      height: `${TIMELINE_HEIGHT}px`,
       pointerEvents: "none"
     }
 

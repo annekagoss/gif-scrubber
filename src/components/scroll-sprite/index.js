@@ -1,6 +1,8 @@
 import { h, Component } from "preact"
+
 import Timeline from "../timeline"
 import Annotations from "../annotations"
+import Controls from "../controls"
 
 import { getTemporalPadding } from "../../utils"
 
@@ -217,7 +219,7 @@ export default class ScrollSprite extends Component {
   }
 
   render() {
-    const { width, height, triggers } = this.props.options;
+    const { width, height, triggers, src, tiles } = this.props.options;
     const { sprite, scrollPosition, resizeTimestamp, scrolling, scrubbing } = this.state;
 
     if (sprite && scrolling || scrubbing) {
@@ -234,11 +236,21 @@ export default class ScrollSprite extends Component {
       endScrub: this.endScrub
     }
 
+    // Background image needed because sprite won't be loaded on first render
+    const canvasStyles = {
+      backgroundImage: `url(${src})`,
+      backgroundRepeat: "no-repeat",
+      backgroundSize: `${10 * tiles.total}%`,
+      backgroundPosition: "top left",
+      width: "100%"
+    }
+
     return (
       <div style={scrollSpriteStyles}>
-        <canvas width={width} height={height} style={{ width: "100%" }} ref={el => this.$canvas = el}></canvas>
+        <canvas width={width} height={height} style={canvasStyles} ref={el => this.$canvas = el}></canvas>
         <Timeline data={timelineData} />
         <Annotations activeTrigger={this.activeTrigger} canvas={this.$canvas} timestamp={resizeTimestamp} />
+        <Controls />
       </div>
     );
   }

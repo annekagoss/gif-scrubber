@@ -1,4 +1,54 @@
 body {
     /* margin: 0; */
     overflow: hidden;
+    font-family: sans-serif !important;
+}
+
+button,
+.button {
+    border: none;
+    margin: 0;
+    padding: 0;
+    width: auto;
+    overflow: visible;
+
+    background: transparent;
+
+    /* inherit font & color from ancestor */
+    color: inherit;
+
+    /* Normalize `line-height`. Cannot be changed from `normal` in Firefox 4+. */
+    line-height: normal;
+
+    /* Corrects font smoothing for webkit */
+    -webkit-font-smoothing: inherit;
+    -moz-osx-font-smoothing: inherit;
+
+    /* Corrects inability to style clickable `input` types in iOS */
+    -webkit-appearance: none;
+}
+
+button:active,
+.button:active {
+    transform: scale(1.05);
+}
+
+button:focus,
+.button:focus {
+    outline: none;
+}
+
+/* Remove excess padding and border in Firefox 4+ */
+button::-moz-focus-inner,
+.button::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+}
+
+[dataopen="true"] {
+    display: block;
+}
+
+[dataopen="false"] {
+    display: none;
 }

@@ -1,5 +1,8 @@
 import { h, Component } from 'preact';
 
+import { TIMELINE_HEIGHT } from "../../utils";
+
+
 const triggerCircleStyles = {
   width: "80px",
   height: "80px",
@@ -21,7 +24,7 @@ const triggerLabelStyles = {
   width: "auto",
   textAlign: "center",
   position: "absolute",
-  marginTop: "-120px",
+  marginTop: `${TIMELINE_HEIGHT * -2}px`,
   backgroundColor: "white",
   left: "50%",
   transform: "translateX(-50%)",

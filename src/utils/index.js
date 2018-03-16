@@ -1,3 +1,5 @@
+export const TIMELINE_HEIGHT = 60;
+
 export function getTemporalPadding(trigger) {
   return trigger.duration * .5;
 }

@@ -7,7 +7,6 @@ const EYEROLL_TRIGGERS = [
 	{
 		timestamp: 0.3,
 		duration: 0.15,
-		name: "peak-eyeroll",
 		text: "PEAK EYE ROLL",
 		circle: {
 		  top: .2,
@@ -18,7 +17,6 @@ const EYEROLL_TRIGGERS = [
 	{
 		timestamp: 0.85,
 		duration: 0.15,
-		name: "amirite",
 		text: "AMIRITE",
 		circle: {
 		  top: .1,
@@ -32,6 +30,7 @@ const EYEROLL_OPTIONS = {
 	width: 200,
 	height: 150,
 	texture: loadSpriteSheet(),
+	src: EYEROLL_SOURCE,
 	tiles: {
 		total: 74,
 		horizontal: 7,
