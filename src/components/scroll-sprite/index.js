@@ -70,6 +70,7 @@ export default class ScrollSprite extends Component {
     time: null,
     scrollPosition: 0,
     resizeTimestamp: Date.now(),
+    scrolling: false,
     scrubbing: false,
     scrubPosition: null,
     scaledScrubPosition: null
@@ -118,12 +119,16 @@ export default class ScrollSprite extends Component {
     const newScrollPosition = scrollPosition + Math.floor(event.deltaY * SCROLL_SPEED);
 
     this.setState({
-      scrollPosition: newScrollPosition
+      scrollPosition: newScrollPosition,
+      scrolling: true
     });
   }
 
   initScrub = () => {
-    this.setState({ scrubbing: true });
+    this.setState({
+      scrubbing: true,
+      scrolling: false
+    });
   }
 
   moveScrub = (event) => {
@@ -196,9 +201,9 @@ export default class ScrollSprite extends Component {
 
   render() {
     const { width, height, triggers } = this.props.options;
-    const { sprite, scrollPosition, resizeTimestamp } = this.state;
+    const { sprite, scrollPosition, resizeTimestamp, scrolling, scrubbing } = this.state;
 
-    if (sprite) {
+    if (sprite && scrolling || scrubbing) {
       const frame = this.getSpriteFrame();
       sprite.update(frame);
     }

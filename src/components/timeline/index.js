@@ -6,9 +6,11 @@ import {
   getTriggerZoneWidth
 } from "../../utils"
 
+const HEIGHT = "60px"
+
 const timelineStyles = {
   width: "100%",
-  height: "40px",
+  height: HEIGHT,
   position: "relative",
   background: "rgba(0, 0, 0, .1)"
 }
@@ -32,7 +34,7 @@ export default class Timeline extends Component {
 
     const baseStyles = {
       position: "absolute",
-      height: "40px",
+      height: HEIGHT,
       backgroundColor: "rgba(0, 0, 0, .25)",
       transform: "translateX(-50%)",
       pointerEvents: "none"
@@ -62,11 +64,11 @@ export default class Timeline extends Component {
 
     const baseStyles = {
       position: "absolute",
-      height: "40px",
+      height: HEIGHT,
       pointerEvents: "none"
     }
 
-    const offset = 100 * playHead;
+    const offset =  Math.floor(100 *playHead);
 
     const playHeadStyles = {
       left: `${offset}%`,
