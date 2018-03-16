@@ -53,10 +53,24 @@ function loadSpriteSheet() {
 
 export default class App extends Component {
 
+	state = {
+		customTriggers: []
+	}
+
 	componentWillMount() {
 			this.setState({
 				texture: loadSpriteSheet()
 			});
+	}
+
+	publishTrigger = (trigger) => {
+		const { customTriggers } = this.state;
+		const newCustomTriggers = customTriggers.concat([trigger]);
+
+		// console.log(newCustomTriggers);
+		this.setState({
+			customTriggers: newCustomTriggers
+		});
 	}
 
 	render() {
@@ -66,7 +80,7 @@ export default class App extends Component {
 
 		return (
 			<div id="app">
-				<ScrollSprite options={options}/>
+				<ScrollSprite options={options} publishTrigger={this.publishTrigger}/>
 			</div>
 		);
 	}

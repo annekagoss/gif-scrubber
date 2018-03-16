@@ -250,7 +250,7 @@ export default class ScrollSprite extends Component {
         <canvas width={width} height={height} style={canvasStyles} ref={el => this.$canvas = el}></canvas>
         <Timeline data={timelineData} />
         <Annotations activeTrigger={this.activeTrigger} canvas={this.$canvas} timestamp={resizeTimestamp} />
-        <Controls scrubPosition={scrubPosition}/>
+        <Controls scrubPosition={scrubPosition} publishTrigger={this.props.publishTrigger}/>
       </div>
     );
   }

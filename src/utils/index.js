@@ -18,3 +18,18 @@ export function formatFloat(f) {
     }
     return f.toFixed(2);
 }
+
+export function checkForNullValues(obj) {
+    for (var key in obj) {
+
+        if (obj[key] === null) {
+            return true;
+        }
+
+        if (typeof obj[key] === "object") {
+            checkForNullValues(obj[key]);
+        }
+    }
+
+    return false;
+}

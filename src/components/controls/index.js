@@ -1,6 +1,6 @@
 import { h, Component } from "preact"
 
-import { formatFloat } from "../../utils";
+import { formatFloat, checkForNullValues } from "../../utils";
 
 const controlsStyles = {
   marginTop: "10px",
@@ -85,9 +85,18 @@ class TextGroup extends Component {
     value: null
   }
 
+  componentDidUpdate = () => {
+    if (!this.props.updateValues) {
+      return;
+    }
+    const valueToUpdate = {};
+    valueToUpdate[this.props.valueName] = this.state.value;
+    this.props.updateValues(valueToUpdate);
+  }
+
   toggleLockedState = () => {
     const newLockedState = !this.state.locked;
-    const newValue = newLockedState ? this.props.value : null;
+    const newValue = newLockedState ? this.$input.value : null;
 
     this.setState({
       locked: newLockedState,
@@ -103,17 +112,13 @@ class TextGroup extends Component {
     return { ...textStyles, color: "lime", pointerEvents: "none" };
   }
 
-  handleSubmit(e) {
-    console.log(e);
-  }
-
   render() {
     const { buttonText, labelText, value } = this.props;
 
     return (
       <div className="controls__group" style={groupStyles}>
 
-        <input type="text" style={this.getValueStyles()}></input>
+        <input type="text" style={this.getValueStyles()} ref={el => this.$input = el}></input>
 
         <button className="controls__button" style={buttonStyles} onClick={this.toggleLockedState}>
           set
@@ -133,6 +138,15 @@ class NumberGroup extends Component {
     value: null
   }
 
+  componentDidUpdate = () => {
+    if (!this.props.updateValues) {
+      return;
+    }
+    const valueToUpdate = {};
+    valueToUpdate[this.props.valueName] = this.state.value;
+    this.props.updateValues(valueToUpdate);
+  }
+
   toggleLockedState = () => {
     const newLockedState = !this.state.locked;
     const newValue = newLockedState ? this.$input.value : null;
@@ -149,10 +163,6 @@ class NumberGroup extends Component {
     }
 
     return { ...valueStyles, color: "lime", pointerEvents: "none" };
-  }
-
-  handleSubmit(e) {
-    console.log(e);
   }
 
   render() {
@@ -182,6 +192,15 @@ class ControlGroup extends Component {
     value: null
   }
 
+  componentDidUpdate = () => {
+    if (!this.props.updateValues) {
+      return;
+    }
+    const valueToUpdate = {};
+    valueToUpdate[this.props.valueName] = this.state.value;
+    this.props.updateValues(valueToUpdate);
+  }
+
   toggleLockedState = () => {
     const newLockedState = !this.state.locked;
     const newValue = newLockedState ? this.props.value : null;
@@ -209,7 +228,7 @@ class ControlGroup extends Component {
   }
 
   render() {
-    const { buttonText, labelText, value } = this.props;
+    const { buttonText, labelText, value, updateValues, valueName } = this.props;
 
     return (
       <div className="controls__group" style={groupStyles}>
@@ -228,6 +247,22 @@ class ControlGroup extends Component {
 }
 
 class CircleGroup extends Component {
+
+  values = {
+    top: null,
+    left: null,
+    size: null
+  }
+
+  updateCircleValues = (values) => {
+    const newValues = { ...this.values, ...values };
+    this.values = newValues;
+
+    this.props.updateValues({
+      circle: this.values
+    });
+  }
+
   render() {
     const { value } = this.props;
 
@@ -238,9 +273,9 @@ class CircleGroup extends Component {
           Circle position
         </div>
 
-        <NumberGroup labelText="vertical" />
-        <NumberGroup labelText="horizontal" />
-        <NumberGroup labelText="size" />
+        <NumberGroup labelText="vertical" valueName="top" updateValues={this.updateCircleValues}/>
+        <NumberGroup labelText="horizontal" valueName="left" updateValues={this.updateCircleValues}/>
+        <NumberGroup labelText="size" valueName="size" updateValues={this.updateCircleValues}/>
 
       </div>
     )
@@ -250,7 +285,27 @@ class CircleGroup extends Component {
 export default class Controls extends Component {
 
   state = {
-    detailsOpen: false
+    detailsOpen: false,
+    dataComplete: false
+  }
+
+  values = {
+    timestamp: null,
+    duration: null,
+    text: null,
+    circle: {
+      top: null,
+      left: null,
+      size: null
+    }
+  }
+
+  componentDidUpdate() {
+
+    // console.log(this.dataComplete);
+    // this.setState({
+    //   dataComplete
+    // })
   }
 
   toggleControls = () => {
@@ -259,15 +314,31 @@ export default class Controls extends Component {
     })
   }
 
-  publish = () => {
-    return;
+  updateValues = (values) => {
+      const newValues = { ...this.values, ...values };
+      this.values = newValues;
   }
 
-  // TODO: Add back once finished debugging
-  // dataOpen={this.state.detailsOpen ? "true" : "false"}
+  publish = () => {
+    const valuesAreNull = checkForNullValues(this.values);
+
+    if (!valuesAreNull) {
+      this.props.publishTrigger(this.values);
+    }
+  }
+
+  getPublishButtonStyles() {
+    if (this.dataComplete) {
+      return publishButtonStyles;
+    }
+
+    return { ...publishButtonStyles, opacity: ".25", pointerEvents: "none" };
+  }
 
   render() {
     const { scrubPosition } = this.props;
+
+    this.dataComplete = !checkForNullValues(this.values);
 
     return (
       <div className="controls" style={controlsStyles}>
@@ -275,18 +346,18 @@ export default class Controls extends Component {
           +
         </button>
 
-        <div className="controls__details" style={detailsStyles} dataOpen="true">
+        <div className="controls__details" style={detailsStyles} dataOpen={this.state.detailsOpen ? "true" : "false"}>
           <div className="controls__block" style={blockStyles}>
-            <ControlGroup labelText="timestamp" value={formatFloat(scrubPosition)} />
-            <NumberGroup labelText="duration" />
-            <TextGroup labelText="text" value="empty string" />
+            <ControlGroup labelText="timestamp" valueName="timestamp" value={formatFloat(scrubPosition)} updateValues={this.updateValues}/>
+            <NumberGroup labelText="duration" valueName="duration" updateValues={this.updateValues}/>
+            <TextGroup labelText="text" valueName="text" value="empty string" updateValues={this.updateValues}/>
           </div>
           <div className="controls__block" style={blockStyles}>
-            <CircleGroup value={{ top: 0, left: 0, size: .2 }} />
+            <CircleGroup value={{ top: 0, left: 0, size: .2 }} valueName="circle" updateValues={this.updateValues}/>
           </div>
         </div>
 
-        <button className="controls__button" style={publishButtonStyles} onClick={this.publish}>
+        <button className="controls__button" style={this.getPublishButtonStyles()} onClick={this.publish} dataOpen={this.state.detailsOpen ? "true" : "false"}>
           publish
         </button>
       </div>
