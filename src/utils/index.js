@@ -11,3 +11,10 @@ export function getTriggerOffset(trigger) {
 export function getTriggerZoneWidth(trigger) {
     return 100 * trigger.duration;
 }
+
+export function formatFloat(f) {
+    if (!f) {
+      return "0.00";
+    }
+    return f.toFixed(2);
+}

@@ -1,5 +1,7 @@
 import { h, Component } from "preact"
 
+import { formatFloat } from "../../utils";
+
 const controlsStyles = {
   marginTop: "10px",
   fontFamily: "Arial"
@@ -30,7 +32,8 @@ const detailsStyles = {
 
 const valueStyles = {
   display: "inline-block",
-  margin: "0 10px"
+  margin: "0 10px",
+  fontSize: "14px"
 }
 
 const labelStyles = {
@@ -70,7 +73,35 @@ const publishButtonStyles = {
   textTransform: "uppercase"
 }
 
+const textStyles = {
+  marginRight: "10px",
+  height: "25px",
+  borderBottom: "solid 1px black"
+}
+
 class TextGroup extends Component {
+  state = {
+    locked: false,
+    value: null
+  }
+
+  toggleLockedState = () => {
+    const newLockedState = !this.state.locked;
+    const newValue = newLockedState ? this.props.value : null;
+
+    this.setState({
+      locked: newLockedState,
+      value: newValue
+    });
+  }
+
+  getValueStyles() {
+    if (!this.state.locked) {
+      return textStyles;
+    }
+
+    return { ...textStyles, color: "lime", pointerEvents: "none" };
+  }
 
   handleSubmit(e) {
     console.log(e);
@@ -82,14 +113,60 @@ class TextGroup extends Component {
     return (
       <div className="controls__group" style={groupStyles}>
 
-        <div className="controls__value" style={{fontSize: "12px"}}>
-          {value}
-        </div>
+        <input type="text" style={this.getValueStyles()}></input>
 
-        <form onsubmit={this.handleSubmit}>
-          <input type="text" style={{ marginRight: "10px", height: "25px" }}></input>
-          <input className="button" type="submit" value="set" style={buttonStyles}></input>
-        </form>
+        <button className="controls__button" style={buttonStyles} onClick={this.toggleLockedState}>
+          set
+        </button>
+
+        <div className="controls__label" style={labelStyles}>
+          {labelText}
+        </div>
+      </div>
+    )
+  }
+}
+
+class NumberGroup extends Component {
+  state = {
+    locked: false,
+    value: null
+  }
+
+  toggleLockedState = () => {
+    const newLockedState = !this.state.locked;
+    const newValue = newLockedState ? this.$input.value : null;
+
+    this.setState({
+      locked: newLockedState,
+      value: newValue
+    });
+  }
+
+  getValueStyles() {
+    if (!this.state.locked) {
+      return valueStyles;
+    }
+
+    return { ...valueStyles, color: "lime", pointerEvents: "none" };
+  }
+
+  handleSubmit(e) {
+    console.log(e);
+  }
+
+  render() {
+    const { buttonText, labelText } = this.props;
+
+    return (
+      <div className="controls__group" style={groupStyles}>
+
+
+        <input type="number" value={this.state.value} step=".01" style={this.getValueStyles()} ref={el => this.$input = el}></input>
+
+        <button className="controls__button" style={buttonStyles} onClick={this.toggleLockedState}>
+          set
+        </button>
 
         <div className="controls__label" style={labelStyles}>
           {labelText}
@@ -100,16 +177,47 @@ class TextGroup extends Component {
 }
 
 class ControlGroup extends Component {
+  state = {
+    locked: false,
+    value: null
+  }
+
+  toggleLockedState = () => {
+    const newLockedState = !this.state.locked;
+    const newValue = newLockedState ? this.props.value : null;
+
+    this.setState({
+      locked: newLockedState,
+      value: newValue
+    });
+  }
+
+  getValueStyles() {
+    if (!this.state.locked) {
+      return valueStyles;
+    }
+
+    return { ...valueStyles, color: "lime" };
+  }
+
+  getValue() {
+    if (this.state.locked) {
+      return this.state.value;
+    }
+
+    return this.props.value;
+  }
+
   render() {
     const { buttonText, labelText, value } = this.props;
 
     return (
       <div className="controls__group" style={groupStyles}>
-        <div className="controls__value" style={valueStyles}>
-          {value}
+        <div className="controls__value" style={this.getValueStyles()}>
+          {this.getValue()}
         </div>
-        <button className="controls__button" style={buttonStyles}>
-          {buttonText}
+        <button className="controls__button" style={buttonStyles} onClick={this.toggleLockedState}>
+          set
         </button>
         <div className="controls__label" style={labelStyles}>
           {labelText}
@@ -130,9 +238,9 @@ class CircleGroup extends Component {
           Circle position
         </div>
 
-        <ControlGroup buttonText="set" labelText="vertical position" value={value.top} />
-        <ControlGroup buttonText="set" labelText="horizontal position" value={value.left} />
-        <ControlGroup buttonText="set" labelText="size" value={value.size} />
+        <NumberGroup labelText="vertical" />
+        <NumberGroup labelText="horizontal" />
+        <NumberGroup labelText="size" />
 
       </div>
     )
@@ -155,9 +263,12 @@ export default class Controls extends Component {
     return;
   }
 
+  // TODO: Add back once finished debugging
   // dataOpen={this.state.detailsOpen ? "true" : "false"}
 
   render() {
+    const { scrubPosition } = this.props;
+
     return (
       <div className="controls" style={controlsStyles}>
         <button className="controls__button" style={addButtonStyles} onClick={this.toggleControls}>
@@ -166,8 +277,8 @@ export default class Controls extends Component {
 
         <div className="controls__details" style={detailsStyles} dataOpen="true">
           <div className="controls__block" style={blockStyles}>
-            <ControlGroup buttonText="set" labelText="timestamp" value="0" />
-            <ControlGroup buttonText="set" labelText="duration" value="0" />
+            <ControlGroup labelText="timestamp" value={formatFloat(scrubPosition)} />
+            <NumberGroup labelText="duration" />
             <TextGroup labelText="text" value="empty string" />
           </div>
           <div className="controls__block" style={blockStyles}>

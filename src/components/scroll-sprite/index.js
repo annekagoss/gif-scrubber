@@ -81,7 +81,7 @@ export default class ScrollSprite extends Component {
   componentDidMount() {
       const { sprite } = this.state;
 
-      document.addEventListener("mousewheel", this.updateScrollPosition, { passive: false });
+      // document.addEventListener("mousewheel", this.updateScrollPosition, { passive: false });
       window.addEventListener("resize", this.updateResizeTimestamp);
 
       if (!sprite && this.$canvas) {
@@ -90,7 +90,7 @@ export default class ScrollSprite extends Component {
   }
 
   componentWillUnmount() {
-      document.removeEventListener("mousewheel", this.updateScrollPosition, { passive: false });
+      // document.removeEventListener("mousewheel", this.updateScrollPosition, { passive: false });
       window.removeEventListener("resize", this.updateResizeTimestamp);
   }
 
@@ -115,16 +115,16 @@ export default class ScrollSprite extends Component {
       });
   }
 
-  updateScrollPosition = (event) => {
-    const { scrollPosition } = this.state;
-
-    const newScrollPosition = scrollPosition + Math.floor(event.deltaY * SCROLL_SPEED);
-
-    this.setState({
-      scrollPosition: newScrollPosition,
-      scrolling: true
-    });
-  }
+  // updateScrollPosition = (event) => {
+  //   const { scrollPosition } = this.state;
+  //
+  //   const newScrollPosition = scrollPosition + Math.floor(event.deltaY * SCROLL_SPEED);
+  //
+  //   this.setState({
+  //     scrollPosition: newScrollPosition,
+  //     scrolling: true
+  //   });
+  // }
 
   initScrub = (event) => {
     const { scrubPosition, scaledScrubPosition } = this.getNewScrubPosition(event);
@@ -220,7 +220,7 @@ export default class ScrollSprite extends Component {
 
   render() {
     const { width, height, triggers, src, tiles } = this.props.options;
-    const { sprite, scrollPosition, resizeTimestamp, scrolling, scrubbing } = this.state;
+    const { sprite, scrollPosition, scrubPosition, resizeTimestamp, scrolling, scrubbing } = this.state;
 
     if (sprite && scrolling || scrubbing) {
       const frame = this.getSpriteFrame();
@@ -250,7 +250,7 @@ export default class ScrollSprite extends Component {
         <canvas width={width} height={height} style={canvasStyles} ref={el => this.$canvas = el}></canvas>
         <Timeline data={timelineData} />
         <Annotations activeTrigger={this.activeTrigger} canvas={this.$canvas} timestamp={resizeTimestamp} />
-        <Controls />
+        <Controls scrubPosition={scrubPosition}/>
       </div>
     );
   }
