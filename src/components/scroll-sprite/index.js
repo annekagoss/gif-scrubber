@@ -75,7 +75,7 @@ export default class ScrollSprite extends Component {
       const { sprite } = this.state;
 
       document.addEventListener("mousewheel", this.updateScrollPosition, { passive: false });
-      window.addEventListener("resize", this.handleResize);
+      window.addEventListener("resize", this.updateResizeTimestamp);
 
       if (!sprite && this.$canvas) {
         this.initializeSprite();
@@ -84,7 +84,7 @@ export default class ScrollSprite extends Component {
 
   componentWillUnmount() {
       document.removeEventListener("mousewheel", this.updateScrollPosition, { passive: false });
-      window.removeEventListener("resize", this.handleResize);
+      window.removeEventListener("resize", this.updateResizeTimestamp);
   }
 
   initializeSprite = () => {
@@ -119,8 +119,7 @@ export default class ScrollSprite extends Component {
     });
   }
 
-  handleResize = () => {
-    console.log("resize");
+  updateResizeTimestamp = () => {
     this.setState({ resizeTimestamp: Date.now() });
   }
 
@@ -152,7 +151,7 @@ export default class ScrollSprite extends Component {
 
   render() {
     const { width, height } = this.props.options;
-    const { sprite, scrollPosition } = this.state;
+    const { sprite, scrollPosition, resizeTimestamp } = this.state;
 
     if (sprite) {
       sprite.update(scrollPosition);
@@ -162,7 +161,7 @@ export default class ScrollSprite extends Component {
       <div style={scrollSpriteStyles}>
         <canvas width={width} height={height} style={{ width: "100%" }} ref={el => this.$canvas = el}></canvas>
         <Timeline playHead={this.playHead} />
-        <Annotations trigger={this.trigger} canvas={this.$canvas}/>
+        <Annotations trigger={this.trigger} canvas={this.$canvas} timestamp={resizeTimestamp}/>
       </div>
     );
   }
