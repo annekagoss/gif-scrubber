@@ -13,6 +13,14 @@ const timelineStyles = {
   background: "rgba(0, 0, 0, .1)"
 }
 
+function getPlayheadColor(activeTrigger) {
+  return activeTrigger ? "red" : "black";
+}
+
+function getPlayheadWidth(activeTrigger) {
+  return activeTrigger ? "3px" : "1px";
+}
+
 export default class Timeline extends Component {
 
   renderTriggerZones() {
@@ -29,7 +37,7 @@ export default class Timeline extends Component {
       transform: "translateX(-50%)"
     }
 
-    // Only look at one trigger for now,
+    // Only look at one trigger for now
     // TODO: Add ability to render multiple
     const trigger = triggers[0];
 
@@ -49,18 +57,22 @@ export default class Timeline extends Component {
   }
 
   getPlayheadStyles() {
-    const { playHead, trigger } = this.props;
+    const { playHead, trigger, activeTrigger } = this.props;
 
     const baseStyles = {
       position: "absolute",
-      width: "1px",
-      height: "40px",
-      backgroundColor: "black"
+      height: "40px"
     }
 
     const offset = 100 * playHead;
 
-    const styles = { ...baseStyles, left: `${offset}%` };
+    const playHeadStyles = {
+      left: `${offset}%`,
+      width: getPlayheadWidth(activeTrigger),
+      backgroundColor: getPlayheadColor(activeTrigger)
+    }
+
+    const styles = { ...baseStyles, ...playHeadStyles };
 
     return styles;
   }

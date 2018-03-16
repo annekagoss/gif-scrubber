@@ -40,9 +40,9 @@ const eyerollStyles = {
 export default class Annotations extends Component {
 
   getCurrentStyles() {
-    const { trigger } = this.props;
+    const { activeTrigger } = this.props;
 
-    if (!trigger) {
+    if (!activeTrigger) {
       return {
         base: {},
         circle: {
@@ -52,7 +52,7 @@ export default class Annotations extends Component {
       };
     }
 
-    if (trigger.name === "peak-eyeroll") {
+    if (activeTrigger.name === "peak-eyeroll") {
       return eyerollStyles;
     }
   }

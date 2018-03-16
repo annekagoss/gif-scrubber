@@ -133,9 +133,9 @@ export default class ScrollSprite extends Component {
     triggers.forEach((trigger) => {
       const temporalPadding = getTemporalPadding(trigger);
       if (Math.abs(this.playHead - trigger.timestamp) < temporalPadding) {
-        this.trigger = trigger;
+        this.activeTrigger = trigger;
       } else {
-        this.trigger = null;
+        this.activeTrigger = null;
       }
     });
   }
@@ -163,8 +163,8 @@ export default class ScrollSprite extends Component {
     return (
       <div style={scrollSpriteStyles}>
         <canvas width={width} height={height} style={{ width: "100%" }} ref={el => this.$canvas = el}></canvas>
-        <Timeline playHead={this.playHead} triggers={triggers} />
-        <Annotations trigger={this.trigger} canvas={this.$canvas} timestamp={resizeTimestamp} />
+        <Timeline playHead={this.playHead} triggers={triggers} activeTrigger={this.activeTrigger} />
+        <Annotations activeTrigger={this.activeTrigger} canvas={this.$canvas} timestamp={resizeTimestamp} />
       </div>
     );
   }
