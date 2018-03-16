@@ -17,9 +17,16 @@ const triggerLabelStyles = {
   color: "red",
   fontFamily: "sans-serif",
   fontWeight: "bold",
-  fontSize: "50px",
-  width: "100%",
-  textAlign: "center"
+  fontSize: "30px",
+  width: "auto",
+  textAlign: "center",
+  position: "absolute",
+  marginTop: "-120px",
+  backgroundColor: "white",
+  left: "50%",
+  transform: "translateX(-50%)",
+  padding: "0 10px",
+  whiteSpace: "nowrap"
 }
 
 const baseTriggerStyles = {
