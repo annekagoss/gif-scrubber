@@ -1,4 +1,4 @@
-# {{ name }}
+# GIF SCRUBBER
 
 ## CLI Commands
 
